@@ -24,12 +24,16 @@ const getFeedHtml = () => {
                             ${tweet.replies.length}
                         </span>
                         <span class="tweet-detail">
-                        <i class="fa-solid fa-heart" 
+                        <i class="fa-solid fa-heart ${
+                            tweet.isLiked ? 'liked' : ''
+                        }" 
                             data-like-icon="${tweet.uuid}"></i>
                             ${tweet.likes}
                         </span>
                         <span class="tweet-detail">
-                        <i class="fa-solid fa-retweet" 
+                        <i class="fa-solid fa-retweet ${
+                            tweet.isRetweeted ? 'retweeted' : ''
+                        }" 
                         data-share-icon="${tweet.uuid}"></i>
                             ${tweet.retweets}
                         </span>
@@ -42,24 +46,37 @@ const getFeedHtml = () => {
     return feedHtml;
 };
 
-const renderHtml = (elementToRender, destinationElement) => {
-    destinationElement.innerHTML += elementToRender;
+const renderHtml = () => {
+    document.querySelector('#feed').innerHTML = getFeedHtml();
 };
 
-const reRenderElement = (elementLocation, elementContent) => {
-    elementLocation.nextSibling.textContent = elementContent;
-};
-
-const handleLikeClick = (uuid) => {
-    tweetsData.forEach((tweet) => {
-        if (tweet.uuid === uuid) {
-            tweet.likes += 1;
-            reRenderElement(
-                document.querySelector(`[data-like-icon="${tweet.uuid}"]`),
-                tweet.likes
-            );
+const handleLikeClick = (tweetId) => {
+    const targetTweetObj = tweetsData.find((tweet) => {
+        if (tweet.uuid === tweetId) {
+            return tweet;
         }
     });
+    if (targetTweetObj.isLiked) {
+        targetTweetObj.likes--;
+    } else {
+        targetTweetObj.likes++;
+    }
+    targetTweetObj.isLiked = !targetTweetObj.isLiked;
+    renderHtml();
+};
+
+const handleRetweetClick = (tweetId) => {
+    const targetTweetObj = tweetsData.find((tweet) => {
+        return tweet.uuid === tweetId;
+    });
+
+    if (targetTweetObj.isRetweeted) {
+        targetTweetObj.retweets--;
+    } else {
+        targetTweetObj.retweets++;
+    }
+    targetTweetObj.isRetweeted = !targetTweetObj.isRetweeted;
+    renderHtml();
 };
 
 document.addEventListener('click', (event) => {
@@ -68,8 +85,8 @@ document.addEventListener('click', (event) => {
     } else if (event.target.dataset.likeIcon) {
         handleLikeClick(event.target.dataset.likeIcon);
     } else if (event.target.dataset.shareIcon) {
-        console.log(event.target.dataset.shareIcon, 'share');
+        handleRetweetClick(event.target.dataset.shareIcon);
     }
 });
 
-renderHtml(getFeedHtml(), document.querySelector('#feed'));
+renderHtml();
