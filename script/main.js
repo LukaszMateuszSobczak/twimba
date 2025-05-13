@@ -1,15 +1,28 @@
 import { tweetsData } from './data.js';
+import { v4 as uuidv4 } from 'https://cdn.jsdelivr.net/npm/uuid@11.1.0/+esm';
 
 const tweetInput = document.querySelector('#tweet-input');
-const tweetBtn = document.querySelector('#tweet-btn');
-
-tweetBtn.addEventListener('click', () => {
-    console.log(tweetInput.value);
-});
 
 const getFeedHtml = () => {
     let feedHtml = '';
+
     tweetsData.forEach((tweet) => {
+        let feedReplays = '';
+        if (tweet.replies.length > 0) {
+            tweet.replies.forEach((replay) => {
+                feedReplays += `
+                <div class="tweet-reply">
+                    <div class="tweet-inner">
+                        <img src="${replay.profilePic}" class="profile-pic">
+                            <div>
+                                <p class="handle">${replay.handle}</p>
+                                <p class="tweet-text">${replay.tweetText}</p>
+                            </div>
+                        </div>
+                </div>
+                `;
+            });
+        }
         feedHtml += `
         <div class="tweet">
             <div class="tweet-inner">
@@ -40,9 +53,13 @@ const getFeedHtml = () => {
                     </div>   
                 </div>            
             </div>
+            <div id="replies-${tweet.uuid}" class="hidden">
+                ${feedReplays}
+            </div>
         </div>
         `;
     });
+
     return feedHtml;
 };
 
@@ -52,9 +69,7 @@ const renderHtml = () => {
 
 const handleLikeClick = (tweetId) => {
     const targetTweetObj = tweetsData.find((tweet) => {
-        if (tweet.uuid === tweetId) {
-            return tweet;
-        }
+        return tweet.uuid === tweetId;
     });
     if (targetTweetObj.isLiked) {
         targetTweetObj.likes--;
@@ -79,13 +94,35 @@ const handleRetweetClick = (tweetId) => {
     renderHtml();
 };
 
+const handleReplayClick = (tweetId) => {
+    document.querySelector(`#replies-${tweetId}`).classList.toggle('hidden');
+};
+
+const handleTweetBtnClick = () => {
+    let newTweet = {
+        handle: `@Scrimba`,
+        profilePic: `images/scrimbalogo.png`,
+        likes: 0,
+        retweets: 0,
+        tweetText: tweetInput.value,
+        replies: [],
+        isLiked: false,
+        isRetweeted: false,
+        uuid: uuidv4(),
+    };
+    tweetsData.unshift(newTweet);
+    renderHtml();
+};
+
 document.addEventListener('click', (event) => {
     if (event.target.dataset.replyIcon) {
-        console.log(event.target.dataset.replyIcon, 'reply');
+        handleReplayClick(event.target.dataset.replyIcon);
     } else if (event.target.dataset.likeIcon) {
         handleLikeClick(event.target.dataset.likeIcon);
     } else if (event.target.dataset.shareIcon) {
         handleRetweetClick(event.target.dataset.shareIcon);
+    } else if (event.target.id === 'tweet-btn') {
+        handleTweetBtnClick();
     }
 });
 
