@@ -1,4 +1,4 @@
-# Simple password generator
+# Simple twitter clone
 
 This is a project from [Scrimba course](https://scrimba.com/frontend-path-c0j)
 
@@ -12,7 +12,6 @@ This is a project from [Scrimba course](https://scrimba.com/frontend-path-c0j)
 -   [Screenshot](#screenshot)
 -   [Overview](#overview)
     -   [Links](#links)
-
 
 ## Overview
 
@@ -36,5 +35,4 @@ This project helped deepen my understanding of how front-end logic powers user i
 
 ### Links
 
--   Live Site URL: [live site](https://enchanting-pavlova-45a521.netlify.app/)
-
+-   Live Site URL: [live site](https://sage-tarsier-b075a8.netlify.app/)
