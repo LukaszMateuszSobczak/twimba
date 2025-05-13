@@ -1,8 +1,6 @@
 import { tweetsData } from './data.js';
 import { v4 as uuidv4 } from 'https://cdn.jsdelivr.net/npm/uuid@11.1.0/+esm';
 
-const tweetInput = document.querySelector('#tweet-input');
-
 const getFeedHtml = () => {
     let feedHtml = '';
 
@@ -99,19 +97,24 @@ const handleReplayClick = (tweetId) => {
 };
 
 const handleTweetBtnClick = () => {
-    let newTweet = {
-        handle: `@Scrimba`,
-        profilePic: `images/scrimbalogo.png`,
-        likes: 0,
-        retweets: 0,
-        tweetText: tweetInput.value,
-        replies: [],
-        isLiked: false,
-        isRetweeted: false,
-        uuid: uuidv4(),
-    };
-    tweetsData.unshift(newTweet);
-    renderHtml();
+    const tweetInput = document.querySelector('#tweet-input');
+
+    if (tweetInput.value !== '') {
+        let newTweet = {
+            handle: `@Scrimba`,
+            profilePic: `images/scrimbalogo.png`,
+            likes: 0,
+            retweets: 0,
+            tweetText: tweetInput.value,
+            replies: [],
+            isLiked: false,
+            isRetweeted: false,
+            uuid: uuidv4(),
+        };
+        tweetsData.unshift(newTweet);
+        renderHtml();
+        tweetInput.value = '';
+    }
 };
 
 document.addEventListener('click', (event) => {
